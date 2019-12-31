@@ -57,4 +57,11 @@ const onInput = async (e) => {
 }
 
 input.addEventListener('input', debounce(onInput, 300))
-// 236
+
+// close autocomplete dropdown
+document.addEventListener('click', (e) => {
+  console.log(e.target)
+  if (!root.contains(e.target)) {
+    dropdown.classList.remove('is-active')
+  }
+})
