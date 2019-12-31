@@ -34,7 +34,7 @@ createAutoComplete({
   root: document.querySelector('#left-autocomplete'),
   onOptionSelect: (movie) => {
     document.querySelector('.tutorial').classList.add('is-hidden')
-    onMovieSelect(movie, document.querySelector('#left-summary'))
+    onMovieSelect(movie, document.querySelector('#left-summary'), 'left')
   },
 })
 
@@ -43,12 +43,15 @@ createAutoComplete({
   root: document.querySelector('#right-autocomplete'),
   onOptionSelect: (movie) => {
     document.querySelector('.tutorial').classList.add('is-hidden')
-    onMovieSelect(movie, document.querySelector('#right-summary'))
+    onMovieSelect(movie, document.querySelector('#right-summary'), 'right')
   },
 })
 
+let leftMovie = null
+let rightMovie = null
+
 // request for single movie on select from autocomplete dropdown
-const onMovieSelect = async (movie, summaryElement) => {
+const onMovieSelect = async (movie, summaryElement, side) => {
   try {
     const response = await axios.get('http://www.omdbapi.com/', {
       params: {
@@ -58,13 +61,34 @@ const onMovieSelect = async (movie, summaryElement) => {
     })
     console.log(' response => ', response.data)
     summaryElement.innerHTML = movieTemplate(response.data)
+
+    if (side === 'left') {
+      leftMovie = response.data
+    } else {
+      rightMovie = response.data
+    }
+
+    if (leftMovie && rightMovie) {
+      runCompareMovies(leftMovie, rightMovie)
+    }
   } catch (e) {
     console.error(e)
   }
 }
 
+// compare movies data
+const runCompareMovies = (leftMovie, rightMovie) => {}
+
 // render movie
 const movieTemplate = (movieDetail) => {
+  // parsing fields
+  const dollars = parseInt(movieDetail.BoxOffice.replace(/\$/g, '').replace(/,/g, ''))
+  const metaScore = parseInt(movieDetail.Metascore)
+  const imdbRating = parseFloat(movieDetail.imdbRating)
+  const imdbVotes = parseInt(movieDetail.imdbVotes.replace(/,/g, ''))
+
+  debugger
+
   return `
     <article class="media">
     <figure class="media-left">
