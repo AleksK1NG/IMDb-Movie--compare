@@ -38,6 +38,12 @@ const resultsWrapper = document.querySelector('.results')
 const onInput = async (e) => {
   const movies = await fetchData(e.target.value)
 
+  // close for empty response
+  if (!movies.length) {
+    dropdown.classList.remove('is-active')
+    return
+  }
+
   resultsWrapper.innerHTML = ''
   dropdown.classList.add('is-active')
 
